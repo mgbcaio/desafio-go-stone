@@ -11,6 +11,8 @@ import (
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/accounts", handlers.GetAllAccounts).Methods(http.MethodGet)
+	router.HandleFunc("/accounts", handlers.CreateAccount).Methods(http.MethodPost)
+	router.HandleFunc("/accounts/{id}/balance", handlers.GetAccountBalance).Methods(http.MethodGet)
 
 	log.Println("API is running!")
 

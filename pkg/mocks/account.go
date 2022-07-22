@@ -23,12 +23,4 @@ var Accounts = []models.Account{
 		Balance:   3400.5,
 		CreatedAt: time.Now(),
 	},
-	{
-		Id:        2,
-		Name:      "Account number 2",
-		Cpf:       "11122233344",
-		Secret:    hashing("test-secret-456"),
-		Balance:   143.5,
-		CreatedAt: time.Now(),
-	},
 }
