@@ -1,4 +1,4 @@
-module mgbcaio/github.com/desafio-go-stone
+module github.com/mgbcaio/desafio-go-stone
 
 go 1.18
 
