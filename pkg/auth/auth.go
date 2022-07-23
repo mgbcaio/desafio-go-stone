@@ -33,31 +33,30 @@ type Credentials struct {
 	Secret string `json:"secret"`
 }
 
-func getUserIDWithCPF(cpf string) int64 {
-	for _, account := range mocks.Accounts {
-		if account.Cpf == cpf {
-			return account.Id
+func getAccountAndUserIDs(cpf string) (int64, int64) {
+	var (
+		userID    int64
+		accountID int64
+	)
+
+	for _, user := range mocks.Users {
+		if user.Cpf == cpf {
+			userID = user.Id
 		}
 	}
 
-	return 0
-}
-
-func getAccountIDWithCPF(cpf string) int64 {
 	for _, account := range mocks.Accounts {
 		if account.Cpf == cpf {
-			return account.Id
+			accountID = account.Id
 		}
 	}
-
-	return 0
+	return userID, accountID
 }
 
 func GenerateJWT(cpf string) (string, time.Time, error) {
 	expirationTime := time.Now().Add(1 * time.Hour)
 
-	userID := getUserIDWithCPF(cpf)
-	accountID := getAccountIDWithCPF(cpf)
+	userID, accountID := getAccountAndUserIDs(cpf)
 
 	claims := &Claims{
 		Cpf:       cpf,

@@ -17,9 +17,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, u := range mocks.Users {
-		if u.Cpf == creds.Cpf {
-			expectedSecret := u.Secret
+	for _, user := range mocks.Users {
+		if user.Cpf == creds.Cpf {
+			expectedSecret := user.Secret
 			if creds.Secret != expectedSecret {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
