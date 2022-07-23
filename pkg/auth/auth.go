@@ -2,6 +2,8 @@ package auth
 
 import (
 	"errors"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -12,6 +14,8 @@ const (
 	TokenParseErr            = "couldn't parse claims"
 	TokenExpiredErr          = "token expired"
 	InvalidTokenSignatureErr = "token invalid signature"
+	UnauthorizedErr          = "unauthorized"
+	BadRequestErr            = "bad request"
 )
 
 var jwtKey = []byte("super-secret-key")
@@ -77,5 +81,29 @@ func ValidateToken(signedToken string) (err error) {
 		return
 	}
 
+	return
+}
+
+func ExtractAndValidateToken(r *http.Request) (err error) {
+	cookies, err := r.Cookie("token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			err = errors.New(UnauthorizedErr)
+			return
+		}
+		err = errors.New(BadRequestErr)
+		return
+	}
+
+	token := cookies.Value
+	err = ValidateToken(token)
+	if err != nil {
+		if strings.Contains(err.Error(), InvalidTokenSignatureErr) || strings.Contains(err.Error(), TokenExpiredErr) || strings.Contains(err.Error(), InvalidTokenErr) {
+			err = errors.New(UnauthorizedErr)
+			return
+		}
+		err = errors.New(BadRequestErr)
+		return
+	}
 	return
 }
