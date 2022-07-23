@@ -17,23 +17,32 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expectedSecret, ok := mocks.Users[creds.Cpf]
-	if !ok || creds.Secret != expectedSecret {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
+	for _, u := range mocks.Users {
+		if u.Cpf == creds.Cpf {
+			expectedSecret := u.Secret
+			if creds.Secret != expectedSecret {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+
+			token, expTime, err := auth.GenerateJWT(creds.Cpf)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			http.SetCookie(w, &http.Cookie{
+				Name:    "token",
+				Value:   token,
+				Expires: expTime,
+			})
+
+			json.NewEncoder(w).Encode(token)
+			return
+
+		}
+
 	}
+	w.WriteHeader(http.StatusUnauthorized)
 
-	token, expTime, err := auth.GenerateJWT(creds.Cpf, creds.Secret)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	http.SetCookie(w, &http.Cookie{
-		Name:    "token",
-		Value:   token,
-		Expires: expTime,
-	})
-
-	json.NewEncoder(w).Encode(token)
 }

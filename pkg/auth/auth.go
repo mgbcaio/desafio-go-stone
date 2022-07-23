@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/mgbcaio/desafio-go-stone/pkg/mocks"
 )
 
 const (
@@ -20,8 +21,10 @@ const (
 
 var jwtKey = []byte("super-secret-key")
 
-type JWTClaim struct {
-	Cpf string `json:"cpf"`
+type Claims struct {
+	Cpf       string `json:"cpf"`
+	UserID    int64  `json:"user_id"`
+	AccountID int64  `json:"account_id"`
 	jwt.StandardClaims
 }
 
@@ -30,11 +33,36 @@ type Credentials struct {
 	Secret string `json:"secret"`
 }
 
-func GenerateJWT(cpf string, secret string) (string, time.Time, error) {
+func getUserIDWithCPF(cpf string) int64 {
+	for _, account := range mocks.Accounts {
+		if account.Cpf == cpf {
+			return account.Id
+		}
+	}
+
+	return 0
+}
+
+func getAccountIDWithCPF(cpf string) int64 {
+	for _, account := range mocks.Accounts {
+		if account.Cpf == cpf {
+			return account.Id
+		}
+	}
+
+	return 0
+}
+
+func GenerateJWT(cpf string) (string, time.Time, error) {
 	expirationTime := time.Now().Add(1 * time.Hour)
 
-	claims := &JWTClaim{
-		Cpf: cpf,
+	userID := getUserIDWithCPF(cpf)
+	accountID := getAccountIDWithCPF(cpf)
+
+	claims := &Claims{
+		Cpf:       cpf,
+		UserID:    userID,
+		AccountID: accountID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -52,7 +80,7 @@ func GenerateJWT(cpf string, secret string) (string, time.Time, error) {
 func ValidateToken(signedToken string) (err error) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,
-		&JWTClaim{},
+		&Claims{},
 		func(token *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
 		},
@@ -70,7 +98,7 @@ func ValidateToken(signedToken string) (err error) {
 		return
 	}
 
-	claims, ok := token.Claims.(*JWTClaim)
+	claims, ok := token.Claims.(*Claims)
 	if !ok {
 		err = errors.New(TokenParseErr)
 		return
@@ -85,6 +113,24 @@ func ValidateToken(signedToken string) (err error) {
 }
 
 func ExtractAndValidateToken(r *http.Request) (err error) {
+	token, err := ExtractToken(r)
+	if err != nil {
+		return
+	}
+
+	err = ValidateToken(token)
+	if err != nil {
+		if strings.Contains(err.Error(), InvalidTokenSignatureErr) || strings.Contains(err.Error(), TokenExpiredErr) || strings.Contains(err.Error(), InvalidTokenErr) {
+			err = errors.New(UnauthorizedErr)
+			return
+		}
+		err = errors.New(BadRequestErr)
+		return
+	}
+	return
+}
+
+func ExtractToken(r *http.Request) (token string, err error) {
 	cookies, err := r.Cookie("token")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -95,15 +141,6 @@ func ExtractAndValidateToken(r *http.Request) (err error) {
 		return
 	}
 
-	token := cookies.Value
-	err = ValidateToken(token)
-	if err != nil {
-		if strings.Contains(err.Error(), InvalidTokenSignatureErr) || strings.Contains(err.Error(), TokenExpiredErr) || strings.Contains(err.Error(), InvalidTokenErr) {
-			err = errors.New(UnauthorizedErr)
-			return
-		}
-		err = errors.New(BadRequestErr)
-		return
-	}
+	token = cookies.Value
 	return
 }

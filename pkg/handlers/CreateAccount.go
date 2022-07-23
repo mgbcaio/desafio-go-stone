@@ -9,11 +9,17 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/mgbcaio/desafio-go-stone/pkg/common"
 	"github.com/mgbcaio/desafio-go-stone/pkg/mocks"
 	"github.com/mgbcaio/desafio-go-stone/pkg/models"
 )
 
 func CreateAccount(w http.ResponseWriter, r *http.Request) {
+	err := common.ValidateToken(w, r)
+	if err != nil {
+		return
+	}
+
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
 
