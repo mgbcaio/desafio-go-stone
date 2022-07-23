@@ -77,13 +77,7 @@ func GenerateJWT(cpf string) (string, time.Time, error) {
 }
 
 func ValidateToken(signedToken string) (err error) {
-	token, err := jwt.ParseWithClaims(
-		signedToken,
-		&Claims{},
-		func(token *jwt.Token) (interface{}, error) {
-			return jwtKey, nil
-		},
-	)
+	token, _, err := ParseToken(signedToken)
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
 			err = errors.New(InvalidTokenSignatureErr)
@@ -142,4 +136,21 @@ func ExtractToken(r *http.Request) (token string, err error) {
 
 	token = cookies.Value
 	return
+}
+
+func ParseToken(signedToken string) (*jwt.Token, *Claims, error) {
+	claims := &Claims{}
+
+	token, err := jwt.ParseWithClaims(
+		signedToken,
+		claims,
+		func(token *jwt.Token) (interface{}, error) {
+			return jwtKey, nil
+		},
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return token, claims, nil
 }
