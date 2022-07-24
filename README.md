@@ -3,6 +3,7 @@
 ## 🚀 Indice
 
 - 📓 [Sobre](#-Sobre)
+- 🧱 [Funcionalidades da aplicação](#-Funcionalidades-da-aplicação)
 - 👨‍💻 [Tecnologias utilizadas](#-Tecnologias-utilizadas)
 - 📦 [Como baixar o projeto](#-Como-baixar-o-projeto)
 - 🤝 [Considerações](#-Considerações)
