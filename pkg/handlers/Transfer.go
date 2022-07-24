@@ -3,9 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 
-	"github.com/mgbcaio/desafio-go-stone/pkg/auth"
 	"github.com/mgbcaio/desafio-go-stone/pkg/common"
 	"github.com/mgbcaio/desafio-go-stone/pkg/mocks"
 	"github.com/mgbcaio/desafio-go-stone/pkg/models"
@@ -21,23 +22,7 @@ func GetAllTransfers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := auth.ExtractToken(r)
-	if err != nil {
-		if err.Error() == auth.BadRequestErr {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		if err.Error() == auth.UnauthorizedErr {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-	}
-
-	_, claims, err := auth.ParseToken(token)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	claims := common.ExtractClaimsFromToken(w, r)
 
 	for _, transfer := range mocks.Transfers {
 		if transfer.AccountOriginId == claims.AccountID {
@@ -54,4 +39,40 @@ func GetAllTransfers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(transfers)
+}
+
+func MakeTransfer(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	w.Header().Add("Content-Type", "application/json")
+
+	err := common.ValidateToken(w, r)
+	if err != nil {
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	var transfer models.Transfer
+	json.Unmarshal(body, &transfer)
+
+	claims := common.ExtractClaimsFromToken(w, r)
+
+	for _, account := range mocks.Accounts {
+		if claims.AccountID == account.Id {
+			if transfer.Amount > account.Balance {
+				json.NewEncoder(w).Encode("This account does not have enough balance to make the transfer.")
+				return
+			}
+			account.Balance -= transfer.Amount
+			json.NewEncoder(w).Encode(account)
+		}
+		if transfer.AccountDestinationId == account.Id {
+			account.Balance += transfer.Amount
+			json.NewEncoder(w).Encode(account)
+		}
+	}
+
 }

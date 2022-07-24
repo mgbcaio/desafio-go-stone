@@ -18,6 +18,7 @@ func ConfigureRouter() *mux.Router {
 	router.HandleFunc("/login", handlers.Login).Methods(http.MethodPost)
 
 	router.HandleFunc("/transfers", handlers.GetAllTransfers).Methods(http.MethodGet)
+	router.HandleFunc("/transfers", handlers.MakeTransfer).Methods(http.MethodPost)
 
 	return router
 }
