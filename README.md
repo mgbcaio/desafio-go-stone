@@ -1,4 +1,4 @@
-# Desafio desenvolvedor backend Go lang - STONE - Caio Milfont
+# Desafio Técnico Go lang - Caio Milfont
 
 ## 🚀 Indice
 
@@ -55,15 +55,21 @@ O desafio proposto aqui foi a implementação de uma API que fosse capaz de real
 ```bash
  # Clonar o repositório
  git clone https://github.com/mgbcaio/desafio-go-stone.git
+```
 
+```bash
  # Entrar no diretório
  cd desafio-go-stone
+```
 
+```bash
  # Construir a imagem do Docker e executá-la com o comando make
  make start
+```
 
+```bash
  # Ou, construir e executar utilizando os próprios comando do Docker
- docker build -t transfer/app:latest .
+ docker build -t transfer/app:latest . &&
  docker run -p 9090:9090 transfer/app:latest
 ```
 
