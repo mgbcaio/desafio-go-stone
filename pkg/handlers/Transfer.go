@@ -16,6 +16,7 @@ var (
 	transfers []models.Transfer
 )
 
+// GetAllTransfers returns a list of all the transfers from the authenticated user.
 func GetAllTransfers(w http.ResponseWriter, r *http.Request) {
 	err := common.ValidateToken(w, r)
 	if err != nil {
@@ -41,6 +42,7 @@ func GetAllTransfers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(transfers)
 }
 
+// MakeTransfer performs a transfer between two users. The origin account its taken form the token and the destination account and balance from the http body.
 func MakeTransfer(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	w.Header().Add("Content-Type", "application/json")

@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// Transfer represents the transfers made.
 type Transfer struct {
 	Id                   int64     `json:"id"`
 	AccountOriginId      int64     `json:"account_origin_id"`

@@ -7,6 +7,7 @@ import (
 	"github.com/mgbcaio/desafio-go-stone/pkg/auth"
 )
 
+// ValidateToken validates the token extracted from the cookies. returns an error if something goes wrong.
 func ValidateToken(w http.ResponseWriter, r *http.Request) (err error) {
 	err = auth.ExtractAndValidateToken(r)
 	if err != nil {
@@ -21,6 +22,7 @@ func ValidateToken(w http.ResponseWriter, r *http.Request) (err error) {
 	return
 }
 
+// ExtractClaimsFromToken extracts the claims from the token extracted from the cookies and returns it.
 func ExtractClaimsFromToken(w http.ResponseWriter, r *http.Request) *auth.Claims {
 	token, err := auth.ExtractToken(r)
 	if err != nil {

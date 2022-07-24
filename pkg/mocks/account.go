@@ -8,6 +8,7 @@ import (
 	"github.com/mgbcaio/desafio-go-stone/pkg/models"
 )
 
+// Function used to generate a hash given a string
 func hashing(s string) hash.Hash {
 	h := fnv.New32a()
 	h.Write([]byte(s))

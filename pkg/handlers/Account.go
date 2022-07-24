@@ -16,11 +16,15 @@ import (
 	"github.com/mgbcaio/desafio-go-stone/pkg/models"
 )
 
+// The documentation says it is not needed to be authenticated to perform Account Requests,
+// but i will leave the code for now because I think it is important to be authenticated.
+
+// GetAllAccounts returns a list of all accounts in the mock file
 func GetAllAccounts(w http.ResponseWriter, r *http.Request) {
-	err := common.ValidateToken(w, r)
-	if err != nil {
-		return
-	}
+	// err := common.ValidateToken(w, r)
+	// if err != nil {
+	// 	return
+	// }
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -28,11 +32,13 @@ func GetAllAccounts(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(mocks.Accounts)
 }
 
+// GetAccountBalance returns the balance of a specific account.
 func GetAccountBalance(w http.ResponseWriter, r *http.Request) {
-	err := common.ValidateToken(w, r)
-	if err != nil {
-		return
-	}
+
+	// err := common.ValidateToken(w, r)
+	// if err != nil {
+	// 	return
+	// }
 
 	vars := mux.Vars(r)
 	id, _ := strconv.ParseInt(vars["id"], 10, 64)
@@ -48,6 +54,7 @@ func GetAccountBalance(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CreateAccount creates a new account and store it in the memory, no changes made to the mock account.
 func CreateAccount(w http.ResponseWriter, r *http.Request) {
 	err := common.ValidateToken(w, r)
 	if err != nil {

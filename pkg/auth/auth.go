@@ -53,6 +53,7 @@ func getAccountAndUserIDs(cpf string) (int64, int64) {
 	return userID, accountID
 }
 
+// GenerateJWT generates a JWT token attaching some claims to the token. Returns the token string, the expiration time and an error if something goes wrong.
 func GenerateJWT(cpf string) (string, time.Time, error) {
 	expirationTime := time.Now().Add(1 * time.Hour)
 
@@ -76,6 +77,7 @@ func GenerateJWT(cpf string) (string, time.Time, error) {
 	return tokenString, expirationTime, nil
 }
 
+// ValidateToken validates the given token string. returns an error if something goes wrong.
 func ValidateToken(signedToken string) (err error) {
 	token, _, err := ParseToken(signedToken)
 	if err != nil {
@@ -105,6 +107,7 @@ func ValidateToken(signedToken string) (err error) {
 	return
 }
 
+// ExtractAndValidateToken extracts and validates the token. returns an error if something goes wrong.
 func ExtractAndValidateToken(r *http.Request) (err error) {
 	token, err := ExtractToken(r)
 	if err != nil {
@@ -123,6 +126,7 @@ func ExtractAndValidateToken(r *http.Request) (err error) {
 	return
 }
 
+// ExtractToken extracts the token from the request cookies. Returns an error if something goes wrong.
 func ExtractToken(r *http.Request) (token string, err error) {
 	cookies, err := r.Cookie("token")
 	if err != nil {
@@ -138,6 +142,7 @@ func ExtractToken(r *http.Request) (token string, err error) {
 	return
 }
 
+// ParseToken parses the token string and returns the JWT token, the Claims and an error if something goes wrong.
 func ParseToken(signedToken string) (*jwt.Token, *Claims, error) {
 	claims := &Claims{}
 

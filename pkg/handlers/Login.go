@@ -8,6 +8,7 @@ import (
 	"github.com/mgbcaio/desafio-go-stone/pkg/mocks"
 )
 
+// Login performs the authentication of the given user
 func Login(w http.ResponseWriter, r *http.Request) {
 	var creds auth.Credentials
 
