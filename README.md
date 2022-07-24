@@ -79,4 +79,4 @@ Executar as chamadas à API no endereço: http://localhost:9090
 
 ## 🤝 Considerações
 
-Gostaria de agradecer a oportunidade que me foi dada de implementar esse desafio técnico. Confesso que foi bastante produtivo e pude aprender um pouco mais com todas as pesquisas que tive que fazer para implementá-lo. Espero que o código esteja de acordo com o que estão procurando em um desenvolver. No mais, feedback sobre o projeto como um todo são muito bem-vindos. Obrigado! 😁
+Gostaria de agradecer a oportunidade que me foi dada de implementar esse desafio técnico. Confesso que foi bastante produtivo e pude aprender um pouco mais com todas as pesquisas que tive que fazer para implementá-lo. Espero que o código esteja de acordo com o que estão procurando em um desenvolvedor. No mais, feedback sobre o projeto como um todo são muito bem-vindos. Obrigado! 😁
