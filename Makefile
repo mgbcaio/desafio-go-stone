@@ -3,15 +3,15 @@
 CONTAINER_NAME := "transfer/app:latest"
 APP_PORT := "9090:9090"
 
-## Build the container
+## Build the container.
 build: 
 	docker build -t $(CONTAINER_NAME) .
 
-## Run the contaienr
+## Run the contaienr.
 run: 
 	docker run -p ${APP_PORT} $(CONTAINER_NAME)
 
-## Start the container
+## Starts the container.
 start: build run
 
 #------------------------------------------------------------------------
@@ -29,7 +29,7 @@ RESET := $(shell tput -Txterm sgr0)
 
 TARGET_MAX_CHAR_NUM=20
 
-## shows help.
+## Shows help.
 help:
 	@echo "--------------------------------------------------------------------------------"
 	@echo "Author  : ${GREEN}$(AUTHOR)${RESET}"
