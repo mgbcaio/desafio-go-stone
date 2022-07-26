@@ -8,6 +8,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/mgbcaio/desafio-go-stone/pkg/mocks"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -71,6 +72,7 @@ func GenerateJWT(cpf string) (string, time.Time, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
+		log.Errorf("Error occurred: %v", err)
 		return "", time.Time{}, err
 	}
 
@@ -90,17 +92,20 @@ func ValidateToken(signedToken string) (err error) {
 
 	if !token.Valid {
 		err = errors.New(InvalidTokenErr)
+		log.Errorf("Error occurred: %v", err)
 		return
 	}
 
 	claims, ok := token.Claims.(*Claims)
 	if !ok {
 		err = errors.New(TokenParseErr)
+		log.Errorf("Error occurred: %v", err)
 		return
 	}
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {
 		err = errors.New(TokenExpiredErr)
+		log.Errorf("Error occurred: %v", err)
 		return
 	}
 
@@ -131,6 +136,7 @@ func ExtractToken(r *http.Request) (token string, err error) {
 	cookies, err := r.Cookie("token")
 	if err != nil {
 		if err == http.ErrNoCookie {
+			log.Errorf("Error occurred: %v", err)
 			err = errors.New(UnauthorizedErr)
 			return
 		}
@@ -154,6 +160,7 @@ func ParseToken(signedToken string) (*jwt.Token, *Claims, error) {
 		},
 	)
 	if err != nil {
+		log.Errorf("Error occurred: %v", err)
 		return nil, nil, err
 	}
 

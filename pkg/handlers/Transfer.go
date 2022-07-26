@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/mgbcaio/desafio-go-stone/pkg/common"
 	"github.com/mgbcaio/desafio-go-stone/pkg/mocks"
 	"github.com/mgbcaio/desafio-go-stone/pkg/models"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -54,7 +54,7 @@ func MakeTransfer(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Fatalln(err)
+		log.Errorf("Error occurred: %v", err)
 	}
 
 	var transfer models.Transfer
@@ -65,6 +65,7 @@ func MakeTransfer(w http.ResponseWriter, r *http.Request) {
 	for _, account := range mocks.Accounts {
 		if claims.AccountID == account.Id {
 			if transfer.Amount > account.Balance {
+				log.Errorf("Error occurred: account does not have enough funds to transfer")
 				json.NewEncoder(w).Encode("This account does not have enough balance to make the transfer.")
 				return
 			}

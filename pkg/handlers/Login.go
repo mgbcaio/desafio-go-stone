@@ -6,6 +6,7 @@ import (
 
 	"github.com/mgbcaio/desafio-go-stone/pkg/auth"
 	"github.com/mgbcaio/desafio-go-stone/pkg/mocks"
+	log "github.com/sirupsen/logrus"
 )
 
 // Login performs the authentication of the given user
@@ -14,6 +15,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
+		log.Errorf("Error occurred: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -44,6 +46,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
+	log.Errorf("User not authenticated!")
 	w.WriteHeader(http.StatusUnauthorized)
 
 }

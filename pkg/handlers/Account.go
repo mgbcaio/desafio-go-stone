@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -14,6 +13,7 @@ import (
 	"github.com/mgbcaio/desafio-go-stone/pkg/common"
 	"github.com/mgbcaio/desafio-go-stone/pkg/mocks"
 	"github.com/mgbcaio/desafio-go-stone/pkg/models"
+	log "github.com/sirupsen/logrus"
 )
 
 // The documentation says it is not needed to be authenticated to perform Account Requests,
@@ -41,7 +41,11 @@ func GetAccountBalance(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	vars := mux.Vars(r)
-	id, _ := strconv.ParseInt(vars["id"], 10, 64)
+	id, err := strconv.ParseInt(vars["id"], 10, 64)
+	if err != nil {
+		log.Errorf("Error occurred: %v", err)
+		return
+	}
 
 	for _, account := range mocks.Accounts {
 		if account.Id == id {
@@ -65,7 +69,7 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Errorf("Error occurred: %v", err)
 	}
 
 	var account models.Account
